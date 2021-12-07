@@ -14,6 +14,14 @@ def get_representations():
         return representaions
 
 def make_mappings():
+        """
+        Mappings contain maps of identifiers to names
+
+        {
+                "identifier" : "name"
+        }
+        """
+
         mappings = dict()
         for idx in representaions:
                 mappings[idx] = list(representaions[idx].keys())[0]
@@ -23,6 +31,10 @@ def make_mappings():
                 outputFile.close()
 
 def get_vectors():
+        """
+                returns all the embeddings as a list from representations
+        """
+
         mappings = get_mappings()
         vectors = []
         names = []
@@ -42,7 +54,7 @@ def get_vectors():
 def get_mappings():
         return mappings
 
-def yield_pairs(index): 
+def yield_pairs(index):
     return mappings[str(index)], representaions[str(index)][mappings[str(index)]]
 
 

@@ -12,10 +12,17 @@ class Datastore:
 
         self.representations = dict()
         self.__mappings = dict()
-        self.index = faiss.IndexFlatIP(self.__dimensions)
+        self.index = faiss.IndexFlatIP(self.__dimensions) #bruteforce search index
 
 
     def add(self,vector, identifier, name):
+        """
+            Adds a vector, identifier and name to the index,
+
+            NOTE: make this method better, its very hacky
+        """
+
+
         self.representations[str(identifier)] = vector
         self.__mappings[str(identifier)] = name
 
@@ -23,9 +30,7 @@ class Datastore:
         to_add.append(vector)
         to_add = np.array(to_add)
         to_add = to_add.reshape(1, self.__dimensions)
-        # print(to_add)
 
-        # print(to_add)
         faiss.normalize_L2(to_add)
         self.index.add(to_add)
         
@@ -33,9 +38,6 @@ class Datastore:
     
     def search(self, emb):
         D, I = self.index.search(emb, 10)
-        # return [self.__mappings[str(val)] for val in I[0]]
-        print(I)
-        return I
 
     
 
