@@ -2,16 +2,25 @@ import json
 import numpy as np
 from numpy.lib.utils import source
 
-with open("vecdata/representations_final.json") as outputFile:
+with open("vecdata/representations_deepface.json") as outputFile:
         representaions = json.load(outputFile)
         outputFile.close()
 
-with open("vecdata/mappings.json") as outputFile:
+with open("vecdata/mappings_deepface.json") as outputFile:
         mappings = json.load(outputFile)
         outputFile.close()
 
 def get_representations():
         return representaions
+
+def make_mappings():
+        mappings = dict()
+        for idx in representaions:
+                mappings[idx] = list(representaions[idx].keys())[0]
+                # print(list(representaions[idx].keys())[0])
+        with open("vecdata/mappings_deepface", "w") as outputFile:
+                json.dump(mappings, outputFile)
+                outputFile.close()
 
 def get_vectors():
         mappings = get_mappings()

@@ -4,6 +4,8 @@ from vectorizer import Vectorizer
 import utils
 import numpy as np
 import faiss
+from vectorizer import Vectorizer
+from PIL import Image
 
 # def search(emb, k=5):
 #     D,I = index.search(emb, k)
@@ -49,7 +51,11 @@ for val in xb:
     # print(to_add.shape)
     index.add(to_add)
 
-emb = vectors[6942]
+img = Image.open("aish.jpg")
+vec = Vectorizer()
+
+emb=np.array(vec.vectorize_single(img), dtype=np.float32)
+
 
 D, I =  index.search(emb, 5)
 print(I[0])

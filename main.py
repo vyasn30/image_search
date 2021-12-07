@@ -1,6 +1,9 @@
+from PIL import Image
+import cv2
 from datastore import Datastore
 import utils
 import numpy as np
+from vectorizer_deepface import Vectorizer
 
 if __name__ == "__main__":
     store = Datastore()
@@ -17,13 +20,30 @@ if __name__ == "__main__":
     for name, vector in zip(names, vectors):
         name = np.array(name)
         vector = np.array(vector)
-        print(vector.shape)
+        # print(vector.shape)
         
         store.add(vector, idx, name)
+        idx+=1
+    
 
-    emb = vectors[6942]
 
-    ans = store.search(emb)
+
+    image = Image.open("muk.jpg")
+    opencvImage = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
+    vec = Vectorizer() 
+
+    emb_2 = vec.vectorize_single(opencvImage) 
+
+    emb_2 = emb_2.reshape(1, 128)
+    print(emb_2.shape)
+    
+
+
+
+    ans = store.search(emb_2)
     print(ans)
+    for id in ans[0]:
+        print(id)
+        print(names[id])
 
 

@@ -5,7 +5,7 @@ import faiss
 # GPU = faiss.StandardGPUResources()
 class Datastore:
 
-    def __init__(self, vectors=None, identifiers=None, dimensions=512, gpu=False, inbuilt_index=False):
+    def __init__(self, vectors=None, identifiers=None, dimensions=128, gpu=False, inbuilt_index=False):
         self.__dimensions = dimensions
         self.__vectors = None
         self.__identifiers = None
@@ -24,16 +24,18 @@ class Datastore:
         to_add = np.array(to_add)
         to_add = to_add.reshape(1, self.__dimensions)
         # print(to_add)
-        print(f"To add shape is {to_add.shape}")
 
         # print(to_add)
+        faiss.normalize_L2(to_add)
         self.index.add(to_add)
+        
         
     
     def search(self, emb):
-        D, I = self.index.search(emb, 5)
+        D, I = self.index.search(emb, 10)
         # return [self.__mappings[str(val)] for val in I[0]]
         print(I)
+        return I
 
     
 
