@@ -18,6 +18,7 @@ if __name__ == "__main__":
     print(len(names))
     print(len(vectors))
 
+
     idx = 0
     for name, vector in zip(names, vectors):
         name = np.array(name)
@@ -42,9 +43,9 @@ if __name__ == "__main__":
 
 
 
-    ans = store.search(emb_2)
-    print(ans)
-    for id in ans[0]:
+    D, I = store.search(emb_2)
+    print(D , I)
+    for id in I[0]:
         print(id)
         print(names[id])
 

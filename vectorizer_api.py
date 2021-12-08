@@ -1,3 +1,4 @@
+from re import I
 from flask import Flask, request, jsonify
 from PIL import Image
 from datastore import Datastore
@@ -9,9 +10,11 @@ from fastapi.responses import FileResponse,HTMLResponse
 import io
 import cv2
 import numpy as np
+import utils
 
 app = FastAPI()
 
+mappings = utils.get_mappings()
 
 @app.post("/vectorize/image")
 async def vectorize_api(identifier: int, file: UploadFile = File(...)):
@@ -46,11 +49,21 @@ async def search_api(file: UploadFile = File(...)):
     emb = np.array(vec.vectorize_single(opencvImage), dtype = np.float32)
     emb = emb.reshape(1, 128)
     Distances, Identifiers = store.search(emb)
-    
-    print(type(Identifiers[0][0]))
-    print(type(Distances[0][0]))
-    ret["id"] = str(Identifiers[0][0])
-    ret["distance"] = str(Distances[0][0])
+
+    print(Distances, Identifiers) 
+    # print(type(Identifiers[0][0]))
+    # print(type(Distances[0][0]))
+    # for idx, distance in zip(Identifiers[0], Distances[0]):
+        # print(mappings[str(idx)])
+        # ret[str(idx)] = idx 
+
+    possible_names = [mappings[str(idx)] for idx in Identifiers[0]]
+
+
+    ret["ids"] = Identifiers[0].tolist()
+    ret["distance"] = Distances[0].tolist()
+    ret["results"] = possible_names
+
 
     return ret
     
