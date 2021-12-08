@@ -83,7 +83,7 @@ class Vectorizer:
 
         # embedding_dict["embeddings"] = img_embedding
         # json_object = json.dumps(embedding_dict)
-        return np.array(img_embedding, dtype=np.float32)
+        return img_embedding
 
 
 

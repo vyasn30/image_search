@@ -1,5 +1,7 @@
+from re import I
 from PIL import Image
 import cv2
+import faiss
 from datastore import Datastore
 import utils
 import numpy as np
@@ -25,15 +27,15 @@ if __name__ == "__main__":
         store.add(vector, idx, name)
         idx+=1
     
+    faiss.write_index(store.index, "vecdata/vector.index")
 
 
-
-    image = Image.open("muk.jpg")
+    image = Image.open("test_data/laura.jpg")
     opencvImage = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
     vec = Vectorizer() 
 
     emb_2 = vec.vectorize_single(opencvImage) 
-
+    emb_2 = np.array(emb_2, dtype=np.float32)
     emb_2 = emb_2.reshape(1, 128)
     print(emb_2.shape)
     

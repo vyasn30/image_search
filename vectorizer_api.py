@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 from PIL import Image
+from datastore import Datastore
 from vectorizer_deepface import Vectorizer
 import uvicorn
 from fastapi import FastAPI, File, UploadFile, Response
@@ -26,8 +27,38 @@ async def vectorize_api(identifier: int, file: UploadFile = File(...)):
     embeddings = vec.vectorize_single(opencvImage)
     ret["id"] = identifier
     ret["embeddings"] = embeddings
-        
+    print(ret)    
     return ret 
+
+@app.post("/vectoriz/search")
+async def search_api(file: UploadFile = File(...)):
+    ret = {}
+    extension = file.filename.split(".")[-1] in ("jpg", "jpeg", "png", "jfif")
+    if not extension:
+        return "Image must be of proper format"
+    
+    contents = await file.read()
+    image = Image.open(io.BytesIO(contents))
+    opencvImage = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
+    vec = Vectorizer()
+    store = Datastore()
+    
+    emb = np.array(vec.vectorize_single(opencvImage), dtype = np.float32)
+    emb = emb.reshape(1, 128)
+    Distances, Identifiers = store.search(emb)
+    
+    print(type(Identifiers[0][0]))
+    print(type(Distances[0][0]))
+    ret["id"] = str(Identifiers[0][0])
+    ret["distance"] = str(Distances[0][0])
+
+    return ret
+    
+
+
+    
+
+    
 
 
 if __name__ == "__main__":
