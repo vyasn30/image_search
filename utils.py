@@ -10,6 +10,13 @@ with open("vecdata/mappings_deepface.json") as outputFile:
         mappings = json.load(outputFile)
         outputFile.close()
 
+with open("vecdata/file_name_mappings.json") as outputFile:
+        file_name_mappings = json.load(outputFile)
+        outputFile.close()
+
+def get_file_name_mappings():
+        return file_name_mappings        
+
 def get_representations():
         return representaions
 
