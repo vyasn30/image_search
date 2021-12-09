@@ -50,7 +50,7 @@ if __name__ == "__main__":
     # print(found)
     query_image = Image.open("test_data/test.jpeg")
 
-    opencv_query_Image = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
+    opencv_query_Image = cv2.cvtColor(np.array(query_image), cv2.COLOR_RGB2BGR)
 
     query_image = np.array(vec.vectorize_single(opencv_query_Image), dtype = np.float32)
     query_image = query_image.reshape(1, 128)
