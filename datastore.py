@@ -12,8 +12,8 @@ class Datastore:
 
         self.representations = dict()
         self.__mappings = dict()
-        self.index = faiss.read_index("vecdata/vector.index")
-        # self.index = faiss.IndexFlatIP(self.__dimensions) #bruteforce search index
+        # self.index = faiss.read_index("vecdata/vector.index")
+        self.index = faiss.IndexFlatIP(self.__dimensions) #bruteforce search index
 
 
     def add(self,vector, identifier, name):
