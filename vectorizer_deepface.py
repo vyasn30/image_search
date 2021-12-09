@@ -97,15 +97,19 @@ class Vectorizer:
 if __name__ =="__main__":
     path = "data/lfw-deepfunneled/lfw-deepfunneled/"
     vec = Vectorizer()
-    representations, file_name_mappings  = vec.vectorize_lfw(path)
+    image = Image.open("test_data/test.jpeg")
+    opencvImage = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
+    embs = vec.vectorize_single(opencvImage)
+    print(embs)
+
     # representation_dict = vec.vectorize_lfw(path)
 
-    with open("vecdata/representations_deepface.json", "w") as output_file:
-        json.dump(representations, output_file) 
-        output_file.close()    
+    # with open("vecdata/representations_deepface.json", "w") as output_file:
+        # json.dump(representations, output_file) 
+        # output_file.close()    
     
-    with open("vecdata/file_name_mappings.json", "w") as output_file:
-        json.dump(file_name_mappings, output_file)
-        output_file.close()
+    # with open("vecdata/file_name_mappings.json", "w") as output_file:
+        # json.dump(file_name_mappings, output_file)
+        # output_file.close()
 
     
