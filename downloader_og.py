@@ -2,7 +2,7 @@ from bs4 import *
 import json
 import requests
 import os
-import scrapper
+import searcher
 # import urllib.request
 
 # CREATE FOLDER
@@ -113,6 +113,7 @@ def download_images(images, url):
             # After getting Image Source URL
             # We will try to get the content of image
             # print(image_link)
+            print(image_link)
             image_links.append(image_link)
 
         print(image_links) 
@@ -138,7 +139,7 @@ def get_link_maps():
 # take url
 #url = input("Enter URL:- ")
 if __name__ == "__main__":
-    for url in scrapper.getlinks():
+    for url in searcher.getlinks():
         print("link images scann started:", url)
 
         main(url)

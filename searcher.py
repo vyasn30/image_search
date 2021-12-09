@@ -35,7 +35,8 @@ def getlinks():
     #     print(G+"Scanning started in Facebook")
     #     print(G+"Scanning started in Twitter")
     #     print(G+"Scanning started in Linkedin")           
-        if(req.status_code == 200):        
+        if(req.status_code == 200): 
+            print("status code 200")       
             soup = BeautifulSoup(req.content,'html.parser')
             #print(soup)
             c=0
