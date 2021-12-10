@@ -9,7 +9,7 @@ from PIL import Image
 import cv2
 import numpy as np
 from vectorizer_deepface import Vectorizer
-from downloader import get_link_maps
+from downloader_og import get_link_maps
 import utils
 
 if __name__ == "__main__":
