@@ -37,7 +37,7 @@ class Downloader:
 
 if __name__ == "__main__":
     downloader = Downloader()
-    dir_name = input("Enter the dir name to store results")
+    dir_name = input("Enter the dir name to store results  ==> ")
     os.mkdir("Downloads/"+dir_name)
     downloader.download(dir_name)
     # print(downloader.imageList)
