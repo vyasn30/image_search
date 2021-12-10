@@ -4,12 +4,12 @@ from bs4.element import SoupStrainer
 import requests
 from bs4 import *
 from requests.exceptions import RetryError
-import searcher
+import searcherV2
 import time
 
 class Scrapper:
-    def __init__(self) -> None:
-        self.links_target = searcher.getlinks() #Links in which you'll search for the images
+    def __init__(self, file_path) -> None:
+        self.links_target = searcherV2.getlinks(file_path) #Links in which you'll search for the images
         print("target_links",self.links_target)
         self.target_link_image_tags_mappings = dict()
         self.tag_imageLink_maps = dict()
@@ -23,16 +23,21 @@ class Scrapper:
         image_tags = []
         target_link_image_tags_mappings = dict()
         for target_link in self.links_target:
-            time.sleep(0.1)
-            r = requests.get(target_link)
-            soup = BeautifulSoup(r.text, 'html.parser')
-            tags = soup.findAll("img")
-            print(len(tags))
-            for tag in tags:
-                image_tags.append(tag) 
+            try:
+                time.sleep(0.1)
+                r = requests.get(target_link, verify=False)
+                soup = BeautifulSoup(r.text, 'html.parser')
+                tags = soup.findAll("img")
+                print(len(tags))
+                for tag in tags:
+                    image_tags.append(tag) 
 
-            self.target_link_image_tags_mappings[target_link] = tags
-            image_tags.append(tags)
+                self.target_link_image_tags_mappings[target_link] = tags
+                image_tags.append(tags)
+            except Exception as e:
+                print(e)
+                continue
+
         print(len(image_tags))
         return image_tags
 

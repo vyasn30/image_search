@@ -26,13 +26,14 @@ class Searcher:
         self.results = []        
         self.query_image_path = None
 
-    def input_query_image(self, query_image_path):
+    def input_query_image(self, img_file):
 
-        self.query_image = Image.open(query_image_path)
-        opencv_query_Image = cv2.cvtColor(np.array(self.query_image), cv2.COLOR_RGB2BGR)
+        # self.query_image = Image.open(query_image_path)
+        # opencv_query_Image = cv2.cvtColor(np.array(self.query_image), cv2.COLOR_RGB2BGR)
 
-        self.query_image = np.array(self.vec.vectorize_single(opencv_query_Image), dtype = np.float32)
-        self.query_image = self.query_image.reshape(1, 128)
+        # self.query_image = np.array(self.vec.vectorize_single(opencv_query_Image), dtype = np.float32)
+        # self.query_image = self.query_image.reshape(1, 128)
+        self.query_image = img_file
 
     def initialize_data_store(self):
         onlyfiles = [f for f in listdir(self.dir_path) if isfile(join(self.dir_path, f))]
@@ -60,6 +61,8 @@ class Searcher:
                 continue
     
     def search(self):
+        ret = dict()
+        print(type(self.query_image))
         Distances, Identifiers = self.data_store.search(self.query_image)
         endtime = time.time()
         # print(f"time taken {endtime-starttime}")
@@ -70,8 +73,9 @@ class Searcher:
             if val != -1:
                 self.results.append((self.found[val]))
                 print(self.found[val], dis)
-                
-
+                ret[self.found[val]] = [str(dis)]
+        
+        return ret 
         # for val in self.results:
             # metrics = DeepFace.verify(img1_path=self.query_image_path, img2_path=val)
             # print(metrics)

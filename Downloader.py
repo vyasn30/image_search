@@ -10,8 +10,8 @@ import cv2
 from vectorizer_deepface import Vectorizer
 
 class Downloader:
-    def __init__(self) -> None:
-        self.scrapper = Scrapper()
+    def __init__(self, file_path) -> None:
+        self.scrapper = Scrapper(file_path)
         self.main_urls = self.scrapper.links_target
         self.img_links = self.scrapper.img_links
         self.link_imagePath_maps = dict()
@@ -19,6 +19,7 @@ class Downloader:
 
     def download(self, dir_name):
         img_count = 0
+        img_link_map = dict()
         for link in self.img_links:
             try:
                 print(link)
@@ -37,9 +38,11 @@ class Downloader:
                             opencv_query_Image = cv2.cvtColor(np.array(query_image), cv2.COLOR_RGB2BGR)
 
                             query_image = self.vec.vectorize_single(opencv_query_Image)
+                            img_link_map[image_path] = link
                         except Exception as e:
                             print(e)
                             print("Garbage Image")
+                            img_link_map.pop(image_path)
                             if os.path.exists(image_path):
                                 os.remove(image_path)
 
@@ -52,7 +55,7 @@ class Downloader:
             except Exception as e:
                 print(e)
                 continue
-
+        return img_link_map
 
 
 if __name__ == "__main__":

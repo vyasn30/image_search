@@ -4,12 +4,12 @@ from halo import Halo
 from bs4 import BeautifulSoup
 import urllib
 # spinner = Halo(text='\nScanning\n', spinner='...')
-def getlinks():
+def getlinks(file_path):
     R = '\033[31m' 
     G = '\033[32m'
     C = '\033[36m'
     W = '\033[0m' 
-    image=input(C+"Enter the image path : ")
+    image=file_path
     try:
         #spinner.start()
         headers = {
