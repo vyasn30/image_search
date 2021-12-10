@@ -6,6 +6,15 @@ import numpy as np
 from os import listdir
 from os.path import isfile, join
 import time
+# from deepface import DeepFace
+import tensorflow as tf
+
+# my_devices = tf.config.experimental.list_physical_devices(device_type='CPU')
+# tf.config.experimental.set_visible_devices(devices= my_devices, device_type='CPU')
+
+
+
+
 
 class Searcher:
     def __init__(self, dir_path) -> None:
@@ -13,9 +22,12 @@ class Searcher:
         self.query_image = None
         self.vec = Vectorizer()
         self.data_store = Datastore()
-        self.found = []        
+        self.found = []
+        self.results = []        
+        self.query_image_path = None
 
     def input_query_image(self, query_image_path):
+
         self.query_image = Image.open(query_image_path)
         opencv_query_Image = cv2.cvtColor(np.array(self.query_image), cv2.COLOR_RGB2BGR)
 
@@ -53,9 +65,18 @@ class Searcher:
         # print(f"time taken {endtime-starttime}")
         # print(Distances, Identifiers) 
         # print(link_maps)
-        for val in Identifiers[0]:
+        
+        for val, dis in zip(Identifiers[0], Distances[0]):
             if val != -1:
-                print(self.found[val])
+                self.results.append((self.found[val]))
+                print(self.found[val], dis)
+                
+
+        # for val in self.results:
+            # metrics = DeepFace.verify(img1_path=self.query_image_path, img2_path=val)
+            # print(metrics)
+            
+
         
 if __name__ == "__main__":
     # dir_path = input("\n\nEnter Directory Path ===> ")
