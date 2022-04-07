@@ -91,7 +91,6 @@ async def search_api(file: UploadFile = File(...)):
     if not extension:
         return "Image must be of proper format!"
 
-    vec = Vectorizer()
     contents = await file.read()
     image = Image.open(io.BytesIO(contents))
     image.save("query_data/test.jpg")
