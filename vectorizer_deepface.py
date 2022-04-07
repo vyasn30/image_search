@@ -116,7 +116,7 @@ class Vectorizer:
 
 
 if __name__ =="__main__":
-    path = "data/model_dataset/model"
+    path = "data/lfw-deepfunneled/lfw-deepfunneled"
     vec = Vectorizer()
     image = Image.open("test_data/test.jpeg")
     opencvImage = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)

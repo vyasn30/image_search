@@ -15,57 +15,60 @@ import os
 import io
 from os import getcwd
 
+
+store = Datastore()
+vec = Vectorizer()
+# representations, file_name_mappings = vec.vectorize_lfw("data/lfw-deepfunneled/lfw-deepfunneled")
+
+# print(representations)
+# print(file_name_mappings)    
+
+
+mappings = utils.get_mappings()
+representations = utils.get_representations()
+file_name_maps = utils.get_file_name_mappings()
+names, vectors = utils.get_vectors()
+
+print(len(names))
+print(len(vectors))
+
+
+idx = 0
+for name, vector in zip(names, vectors):
+    name = np.array(name)
+    vector = np.array(vector)
+    # print(vector.shape)
+    
+    store.add(vector, idx, name)
+    idx+=1
+
+faiss.write_index(store.index, "vecdata/vector.index")
+
+
+
+
 def search(query_img):
-    store = Datastore()
-    vec = Vectorizer()
-    # representations, file_name_mappings = vec.vectorize_lfw("data/lfw-deepfunneled/lfw-deepfunneled")
     
-    # print(representations)
-    # print(file_name_mappings)    
-    
-
-    mappings = utils.get_mappings()
-    representations = utils.get_representations()
-    file_name_maps = utils.get_file_name_mappings()
-    names, vectors = utils.get_vectors()
-
-    print(len(names))
-    print(len(vectors))
-
-
-    idx = 0
-    for name, vector in zip(names, vectors):
-        name = np.array(name)
-        vector = np.array(vector)
-        # print(vector.shape)
-        
-        store.add(vector, idx, name)
-        idx+=1
-    
-    faiss.write_index(store.index, "vecdata/vector.index")
-
-
     # image = Image.open("test_data/muk.jpg")
     opencvImage = cv2.cvtColor(np.array(query_img), cv2.COLOR_RGB2BGR)
-    vec = Vectorizer() 
 
     emb_2 = vec.vectorize_single(opencvImage) 
     emb_2 = np.array(emb_2, dtype=np.float32)
     emb_2 = emb_2.reshape(1, 128)
-    print(emb_2.shape)
+    # print(emb_2.shape)
     
 
 
 
     D, I = store.search(emb_2)
-    print(D , I)
+    # print(D , I)
     ret = dict()
     rank=0
     file_names = []
     for id in I[0]:
-        print(id)
-        print(names[id])
-        print(file_name_maps[str(id)])
+        # print(id)
+        # print(names[id])
+        # print(file_name_maps[str(id)])
         rank+=1
         ret[str(rank)] = {str(rank) : {names[id]:file_name_maps[str(id)]}}
         file_names.append(file_name_maps[str(id)])
