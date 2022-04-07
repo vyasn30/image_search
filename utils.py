@@ -14,13 +14,13 @@ with open("vecdata/file_name_mappings.json") as outputFile:
         file_name_mappings = json.load(outputFile)
         outputFile.close()
 
-with open("vecdata/link_maps.json") as outputFile:
-        link_maps = json.load(outputFile)
-        outputFile.close()
+# with open("vecdata/link_maps.json") as outputFile:
+#         link_maps = json.load(outputFile)
+#         outputFile.close()
 
 
-def get_link_maps():
-        return link_maps
+# def get_link_maps():
+#         return link_maps
 
 def get_file_name_mappings():
         return file_name_mappings        
@@ -72,7 +72,5 @@ def get_mappings():
 def yield_pairs(index):
     return mappings[str(index)], representaions[str(index)][mappings[str(index)]]
 
-
-    
-
-    
+if __name__ == "__main__":
+        make_mappings()

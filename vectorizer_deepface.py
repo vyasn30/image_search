@@ -1,7 +1,8 @@
 from PIL import Image
 import cv2
 import numpy as np
-from deepface.basemodels.Facenet import InceptionResNetV2
+from deepface import DeepFace
+from deepface.basemodels import Facenet
 from deepface.commons import functions
 from tqdm import tqdm
 import os
@@ -19,8 +20,10 @@ class Vectorizer:
         """
 
 
-        self.model = InceptionResNetV2()
-        self.model.load_weights("models/facenet_weights.h5")
+        self.model = Facenet.loadModel()
+        # self.model.load_weights()
+        # self.model.load_weights("models/facenet_weights.h5")
+        # print(self.model)
 
     def vectorize_lfw(self, lfw_path):
         """
@@ -33,6 +36,7 @@ class Vectorizer:
             }
 
         """
+        backends = ['opencv', 'ssd', 'dlib', 'mtcnn', 'retinaface', 'mediapipe']
         representations = dict()
         total_count = 0
         img_count = 0
@@ -44,30 +48,47 @@ class Vectorizer:
                                             
 
                     for img in os.listdir(os.path.join(root, dir)):
+                        # try:
+                        img_path = root+"/"+dir+"/"+img
+                        img_file = Image.open(img_path)
+                        # opencvImage = cv2.cvtColor(np.array(img_file), cv2.COLOR_RGB2BGR)
                         try:
-                            img_path = root+"/"+dir+"/"+img
-                            img_file = Image.open(img_path)
-                            opencvImage = cv2.cvtColor(np.array(img_file), cv2.COLOR_RGB2BGR)
-                            img_file = functions.preprocess_face(img=opencvImage, target_size=(160, 160))
-                            img_embedding = self.model.predict(img_file)[0,:].tolist()
-                            if len(img_embedding) == 0:
-                                raise Exception("Face not detected")
+                            # img_file = DeepFace.detectFace(img_path=img_path, target_size=(160, 160), detector_backend="mtcnn")
+                            img = functions.preprocess_face(img=img_path, target_size=(160, 160))
+                            img_embedding = self.model.predict(img)[0,:].tolist()
+                            # if len(img_embedding) == 0:
+                            #     raise Exception("Face not detected")
                             
-
-                                
-                            file_name_mappings[str(img_count)] = img_path
-                            representations[str(img_count)] = {dir: img_embedding}
-                            img_count+=1
-
+                        
                         except Exception as e:
-                            err_count+=1    #there are some images where faces can't be detected
-                            # print(e)
+                            err_count+=1
+                            print(e)
                             print(err_count)
                             continue
+                        
 
-                    
-                    total_count+=1
+                            
+                        file_name_mappings[str(img_count)] = img_path
+                        representations[str(img_count)] = {dir: img_embedding}
+                        img_count+=1
+                        
+                        # except Exception as e:
+                            # err_count+=1    #there are some images where faces can't be detected
+                            # print(e)
+                            # print(err_count)
+                            # continue
 
+                    # total_count+=1
+                    # if total_count == 20:
+                    #         break
+        print("total =", img_count)                
+        print("errors = ",err_count)
+        with open("vecdata/representations_deepface.json", "w") as outputFile:
+            json.dump(representations, outputFile)
+            
+        with open("vecdata/file_name_mappings.json", "w") as outputFile:
+            json.dump(file_name_mappings, outputFile)
+        
         return representations, file_name_mappings
                 
                 
@@ -95,21 +116,13 @@ class Vectorizer:
 
 
 if __name__ =="__main__":
-    path = "data/lfw-deepfunneled/lfw-deepfunneled/"
+    path = "data/model_dataset/model"
     vec = Vectorizer()
     image = Image.open("test_data/test.jpeg")
     opencvImage = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
     embs = vec.vectorize_single(opencvImage)
     print(embs)
 
-    # representation_dict = vec.vectorize_lfw(path)
-
-    # with open("vecdata/representations_deepface.json", "w") as output_file:
-        # json.dump(representations, output_file) 
-        # output_file.close()    
-    
-    # with open("vecdata/file_name_mappings.json", "w") as output_file:
-        # json.dump(file_name_mappings, output_file)
-        # output_file.close()
+    representation_dict = vec.vectorize_lfw(path)
 
     

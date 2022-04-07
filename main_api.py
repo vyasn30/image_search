@@ -42,9 +42,9 @@ async def search_api(file: UploadFile = File(...)):
     opencvImage = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
     query_image = np.array(vec.vectorize_single(opencvImage), dtype = np.float32)
     query_image = query_image.reshape(1, 128)
-    downloader = Downloader("query_data/test.jpg")
+    # downloader = Downloader("query_data/test.jpg")
 
-    
+
 
     download_dir = "Downloads/"+dir_name
     link_map = downloader.download(dir_name)
