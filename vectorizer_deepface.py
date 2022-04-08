@@ -1,3 +1,4 @@
+from tkinter.tix import Tree
 from PIL import Image
 import cv2
 import numpy as np
@@ -7,6 +8,7 @@ from deepface.commons import functions
 from tqdm import tqdm
 import os
 import json
+import utils
 
 # os.environ['TF_CPP_MIN_LOG_LEVEL'] = 3
 
@@ -21,9 +23,13 @@ class Vectorizer:
 
 
         self.model = Facenet.loadModel()
-        # self.model.load_weights()
-        # self.model.load_weights("models/facenet_weights.h5")
-        # print(self.model)
+        
+
+    def to_vectorize_lfw(self):
+        return False if (   os.path.exists("vecdata/file_name_mappings_lfw.json") and
+                                    os.path.exists("vecdata/mappings_deepface_lfw.json") and
+                                    os.path.exists("vecdata/representations_deepface_lfw.json")) else True
+                        
 
     def vectorize_lfw(self, lfw_path):
         """
@@ -36,62 +42,49 @@ class Vectorizer:
             }
 
         """
-        backends = ['opencv', 'ssd', 'dlib', 'mtcnn', 'retinaface', 'mediapipe']
-        representations = dict()
-        total_count = 0
-        img_count = 0
-        err_count = 0               
-        file_name_mappings = dict()
-        for root, dirs, files in os.walk(lfw_path):
-            if dirs:
-                for dir in tqdm(dirs):
-                                            
+        if self.to_vectorize_lfw():
+            representations = dict()
+            total_count = 0
+            img_count = 0
+            err_count = 0               
+            file_name_mappings = dict()
+            for root, dirs, files in os.walk(lfw_path):
+                if dirs:
+                    for dir in tqdm(dirs):
+                                                
 
-                    for img in os.listdir(os.path.join(root, dir)):
-                        # try:
-                        img_path = root+"/"+dir+"/"+img
-                        img_file = Image.open(img_path)
-                        # opencvImage = cv2.cvtColor(np.array(img_file), cv2.COLOR_RGB2BGR)
-                        try:
-                            # img_file = DeepFace.detectFace(img_path=img_path, target_size=(160, 160), detector_backend="mtcnn")
-                            img = functions.preprocess_face(img=img_path, target_size=(160, 160))
-                            img_embedding = self.model.predict(img)[0,:].tolist()
-                            # if len(img_embedding) == 0:
-                            #     raise Exception("Face not detected")
+                        for img in os.listdir(os.path.join(root, dir)):
+                            # try:
+                            img_path = root+"/"+dir+"/"+img
+                            try:
+                                img = functions.preprocess_face(img=img_path, target_size=(160, 160))
+                                img_embedding = self.model.predict(img)[0,:].tolist()
+                        
+                            except Exception as e:
+                                err_count+=1
+                                print(e)
+                                print(err_count)
+                                continue
                             
-                        
-                        except Exception as e:
-                            err_count+=1
-                            print(e)
-                            print(err_count)
-                            continue
-                        
 
+                                
+                            file_name_mappings[str(img_count)] = img_path
+                            representations[str(img_count)] = {dir: img_embedding}
+                            img_count+=1
                             
-                        file_name_mappings[str(img_count)] = img_path
-                        representations[str(img_count)] = {dir: img_embedding}
-                        img_count+=1
-                        
-                        # except Exception as e:
-                            # err_count+=1    #there are some images where faces can't be detected
-                            # print(e)
-                            # print(err_count)
-                            # continue
-
-                    # total_count+=1
-                    # if total_count == 20:
-                    #         break
-        print("total =", img_count)                
-        print("errors = ",err_count)
-        with open("vecdata/representations_deepface.json", "w") as outputFile:
-            json.dump(representations, outputFile)
+            print("total =", img_count)                
+            print("errors = ",err_count)
+            with open("vecdata/representations_deepface.json", "w") as outputFile:
+                json.dump(representations, outputFile)
+                
+            with open("vecdata/file_name_mappings.json", "w") as outputFile:
+                json.dump(file_name_mappings, outputFile)
             
-        with open("vecdata/file_name_mappings.json", "w") as outputFile:
-            json.dump(file_name_mappings, outputFile)
-        
-        return representations, file_name_mappings
-                
-                
+            utils.make_mappings()
+            return representations, file_name_mappings
+                    
+        else:
+            print("Embeddings already generated")        
 
     def vectorize_single(self, img_cv2):
         """
@@ -124,5 +117,3 @@ if __name__ =="__main__":
     print(embs)
 
     representation_dict = vec.vectorize_lfw(path)
-
-    

@@ -2,15 +2,15 @@ import json
 import numpy as np
 from numpy.lib.utils import source
 
-with open("vecdata/representations_deepface.json") as outputFile:
+with open("vecdata/representations_deepface_lfw.json") as outputFile:
         representaions = json.load(outputFile)
         outputFile.close()
 
-with open("vecdata/mappings_deepface.json") as outputFile:
+with open("vecdata/mappings_deepface_lfw.json") as outputFile:
         mappings = json.load(outputFile)
         outputFile.close()
 
-with open("vecdata/file_name_mappings.json") as outputFile:
+with open("vecdata/file_name_mappings_lfw.json") as outputFile:
         file_name_mappings = json.load(outputFile)
         outputFile.close()
 
